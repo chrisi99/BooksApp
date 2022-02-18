@@ -1,47 +1,31 @@
-const select = {
-
-  templateOf: {
-    book: '#template-book'
-  },
-
-  containerOf: {
-    list: '.books-list',
-    image: '.book__image',
-    filters: '.filters'
-  }
-
-};
-
-const templates = {
-  book: Handlebars.compile(document.querySelector(select.templateOf.book).innerHTML)
-};
+import {select, templates} from '../settings.js';
+import utils from '../utils.js';
 
 class BookList{
   constructor(){
     const thisBookList = this;
-
+    
     thisBookList.initData();
     thisBookList.getElements();
     thisBookList.render();
     thisBookList.initActions();
   }
-
+    
   initData(){
     const thisBookList = this;
-
+    
     thisBookList.data = dataSource.books;
     thisBookList.favoriteBooks = [];
     thisBookList.filters = [];
   }
-
+    
   render(){
     const thisBookList = this;
-
+    
     for(let book of thisBookList.data){
       const ratingBgc = thisBookList.determineRatingBgc(book.rating);
       book.ratingBgc = ratingBgc;
-      const ratingWidth = book.rating * 10;
-      book.ratingWidth = ratingWidth;
+      book.ratingWidth = book.rating * 10;
       const generatedHTML = templates.book(book);
       const element = utils.createDOMFromHTML(generatedHTML);
       const bookContainer = document.querySelector(select.containerOf.list);
@@ -49,26 +33,26 @@ class BookList{
       console.log(ratingBgc);
     }
   }
-
+    
   getElements(){
     const thisBookList= this;
-
+    
     thisBookList.dom = {};
-
+    
     thisBookList.dom.container = document.querySelector(select.containerOf.list);
     thisBookList.dom.form = document.querySelector(select.containerOf.filters);
   }
-
+    
   initActions(){
     const thisBookList = this;
-
+    
     thisBookList.dom.container.addEventListener('dblclick', function(event){
       event.preventDefault();
       const clickedElement = event.target.offsetParent;
-
+    
       if(clickedElement.classList.contains('book__image')){
         const bookId = clickedElement.getAttribute('data-id');
-
+    
         if(!clickedElement.classList.contains('favorite')){
           clickedElement.classList.add('favorite');
           thisBookList.favoriteBooks.push(bookId);
@@ -79,10 +63,10 @@ class BookList{
         }
       }
     });
-    
+        
     thisBookList.dom.form.addEventListener('click', function(event){
       const clickedInput = event.target;
-
+    
       if(clickedInput.tagName === 'INPUT' && clickedInput.type === 'checkbox' && clickedInput.name === 'filter'){
         if(clickedInput.checked){
           thisBookList.filters.push(clickedInput.value);
@@ -94,32 +78,32 @@ class BookList{
       thisBookList.filterBooks();
     });
   }
-
+    
   filterBooks(){
     const thisBookList = this;
-
+    
     for(let book of thisBookList.data){
-      let shouldbehidden = false;
-
+      let shouldBeHidden = false;
+    
       for(let filter of thisBookList.filters){
         if(!book.details[filter]){
-          shouldbehidden = true;
+          shouldBeHidden = true;
           break;
         }
       }
-
+    
       const filterBook = document.querySelector('.book__image[data-id="' + book.id+ '"]');
-      
-      if(shouldbehidden){
+          
+      if(shouldBeHidden){
         filterBook.classList.add('hidden');
       }else{
         filterBook.classList.remove('hidden');
       }
     }
   }
-
+    
   determineRatingBgc(rating){
-      
+          
     if(rating < 6){
       return  'linear-gradient(to bottom,  #fefcea 0%, #f1da36 100%)';
     } else if (rating > 6 && rating <= 8){
@@ -130,8 +114,7 @@ class BookList{
       return 'linear-gradient(to bottom, #ff0084 0%,#ff0084 100%)';
     }
   }
-  
+      
 }
 
-const app = new BookList();
-console.log('app', app);
+export default BookList;

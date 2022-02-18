@@ -5,3 +5,5 @@ utils.createDOMFromHTML = function(htmlString) {
   div.innerHTML = htmlString.trim();
   return div.firstChild;
 };
+
+export default utils;
